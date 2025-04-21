@@ -1,15 +1,15 @@
 ﻿using IceCreamService.Application.DTOs;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using IceCreamService.Core.Entities;
+
 
 namespace IceCreamService.Application.Interfaces
 {
     public interface IBookingService
     {
-        Task<BookingDto> GetByIdAsync(int id);
-        Task<IEnumerable<BookingDto>> GetAllAsync();
-        Task AddAsync(BookingDto bookingDto);
-        Task UpdateAsync(BookingDto bookingDto);
-        Task DeleteAsync(int id);
+        Task<Booking?> GetByIdAsync(int id);
+        Task<IEnumerable<Booking>> GetAllAsync();
+        Task AddAsync(Booking booking);
+        Task UpdateAsync(Booking booking);
+        Task DeleteByIdAsync(int id);
     }
 }

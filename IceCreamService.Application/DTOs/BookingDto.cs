@@ -6,7 +6,7 @@
         public string? UserName { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
-        public string? EventDate { get; set; }
+        public DateTime? EventDate { get; set; }
         public string? Location { get; set; }
         public int NumberOfGuests { get; set; }
         public string? IceCreamPreferences { get; set; }

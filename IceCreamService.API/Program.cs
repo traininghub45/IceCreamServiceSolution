@@ -50,7 +50,7 @@ builder.Services.AddCors(options =>
 
 // Register the ApplicationDbContext
 builder.Services.AddDbContext<ApplicationDbContext>();
-
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IUserService, UserService>();

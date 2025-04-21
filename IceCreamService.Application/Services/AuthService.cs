@@ -20,18 +20,18 @@ namespace IceCreamService.Application.Interfaces
 
         public async Task<string> AuthenticateAsync(string userName,string password)
         {
-            var user = await _userRepository.GetByUsernameAsync(userName);
-            if (user == null || !VerifyPasswordHash(password, user?.Password))
-                throw new UnauthorizedAccessException("Invalid credentials");
+            //var user = await _userRepository.GetByUsernameAsync(userName);
+            //if (user == null || !VerifyPasswordHash(password, user?.Password))
+            //    throw new UnauthorizedAccessException("Invalid credentials");
 
-            // Generate token
-            return _tokenService.GenerateToken(user);
+            //// Generate token
+            return "";
         }
 
         public async Task RegisterAsync(UserDto request)
         {
-            if (await _userRepository.UserExistsAsync(request.Email))
-                throw new InvalidOperationException("Username already exists");
+            //f (await _userRepository.UserExistsAsync(request.Email))
+              //  throw new InvalidOperationException("Username already exists");
 
             var user = new User
             {

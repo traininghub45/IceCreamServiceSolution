@@ -1,51 +1,41 @@
 ﻿using AutoMapper;
-using IceCreamService.Application.DTOs;
 using IceCreamService.Application.Interfaces;
 using IceCreamService.Core.Entities;
 using IceCreamService.Core.Interfaces;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace IceCreamService.Application.Services
 {
     public class BookingService : IBookingService
     {
         private readonly IBookingRepository _bookingRepository;
-        private readonly IMapper _mapper;
-
         public BookingService(IBookingRepository bookingRepository, IMapper mapper)
         {
             _bookingRepository = bookingRepository;
-            _mapper = mapper;
         }
 
-        public async Task<BookingDto> GetByIdAsync(int id)
+        public async Task<Booking?> GetByIdAsync(int id)
         {
-            var booking = await _bookingRepository.GetByIdAsync(id);
-            return _mapper.Map<BookingDto>(booking);
+            return await _bookingRepository.GetByIdAsync(id);
         }
 
-        public async Task<IEnumerable<BookingDto>> GetAllAsync()
+        public async Task<IEnumerable<Booking>> GetAllAsync()
         {
-            var bookings = await _bookingRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<BookingDto>>(bookings);
+           return await _bookingRepository.GetAllAsync();
         }
 
-        public async Task AddAsync(BookingDto bookingDto)
+        public async Task AddAsync(Booking booking)
         {
-            var booking = _mapper.Map<Booking>(bookingDto);
             await _bookingRepository.AddAsync(booking);
         }
 
-        public async Task UpdateAsync(BookingDto bookingDto)
+        public async Task UpdateAsync(Booking booking)
         {
-            var booking = _mapper.Map<Booking>(bookingDto);
             await _bookingRepository.UpdateAsync(booking);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteByIdAsync(int id)
         {
-            await _bookingRepository.DeleteAsync(id);
+            await _bookingRepository.DeleteByIdAsync(id);
         }
     }
 }
