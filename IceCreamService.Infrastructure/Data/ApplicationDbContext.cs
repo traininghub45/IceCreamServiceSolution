@@ -10,6 +10,8 @@ namespace IceCreamService.Infrastructure.Data
      
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<ContactMessage> ContactMessages { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -22,6 +24,7 @@ namespace IceCreamService.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserConfiguration).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContactMessageConfiguration).Assembly);
         }
     }
 }
