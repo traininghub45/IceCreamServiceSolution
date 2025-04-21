@@ -11,6 +11,7 @@ namespace IceCreamService.Application.Mapping
             // Define your mappings here
             CreateMap<Booking, BookingDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<ContactMessage, ContactMessageDto>().ReverseMap();
         }
     }
 }
