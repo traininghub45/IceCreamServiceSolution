@@ -1,15 +1,14 @@
-﻿using IceCreamService.Application.DTOs;
-using IceCreamService.Core.Entities;
+﻿using IceCreamService.Core.Entities;
 
 
 namespace IceCreamService.Application.Interfaces
 {
     public interface IUserService
     {
-        Task<UserDto> GetByIdAsync(int id);
-        Task<IEnumerable<UserDto>> GetAllAsync();
-        Task AddAsync(UserDto userDto);
-        Task UpdateAsync(UserDto userDto);
+        Task<User?> GetByIdAsync(int id);
+        Task<IEnumerable<User>> GetAllAsync();
+        Task AddAsync(User userDto);
+        Task UpdateAsync(User userDto);
         Task DeleteAsync(int id);
     }
 }

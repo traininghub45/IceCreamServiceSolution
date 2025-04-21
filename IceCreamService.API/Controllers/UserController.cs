@@ -1,5 +1,7 @@
-﻿using IceCreamService.Application.DTOs;
+﻿using AutoMapper;
+using IceCreamService.Application.DTOs;
 using IceCreamService.Application.Interfaces;
+using IceCreamService.Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,9 +14,11 @@ namespace IceCreamService.API.Controllers
     {
 
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IMapper mapper)
         {
+            _mapper = mapper;
             _userService = userService;
         }
 
@@ -42,7 +46,7 @@ namespace IceCreamService.API.Controllers
             {
                 return BadRequest();
             }
-            await _userService.UpdateAsync(userDto);
+            await _userService.UpdateAsync(_mapper.Map<User>(userDto));
             return NoContent();
         }
 

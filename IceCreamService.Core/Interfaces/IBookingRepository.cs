@@ -2,12 +2,8 @@
 
 namespace IceCreamService.Core.Interfaces
 {
-    public interface IBookingRepository
+    public interface IBookingRepository : IRepository<Booking>
     {
-        Task<Booking> GetByIdAsync(int id);
-        Task<IEnumerable<Booking>> GetAllAsync();
-        Task AddAsync(Booking booking);
-        Task UpdateAsync(Booking booking);
-        Task DeleteAsync(int id);
+
     }
 }
