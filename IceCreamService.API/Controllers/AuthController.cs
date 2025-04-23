@@ -1,4 +1,5 @@
-﻿using IceCreamService.Application.DTOs;
+﻿using AutoMapper;
+using IceCreamService.Application.DTOs;
 using IceCreamService.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +10,13 @@ namespace IceCreamService.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthService authService)
+
+        public AuthController(IAuthService authService, IMapper mapper)
         {
             _authService = authService;
+            _mapper = mapper;
         }
 
         [HttpPost("login")]
@@ -20,12 +24,21 @@ namespace IceCreamService.API.Controllers
         {
             try
             {
-                var token = await _authService.AuthenticateAsync(userLoginDto.UserName, userLoginDto.Password);
-                return Ok(new { Token = token });
+                var authResult = await _authService.AuthenticateAsync(userLoginDto.Email, userLoginDto.Password);
+
+                return Ok(new AuthResponseDto
+                {
+                    Token = authResult.Token,
+                    User = _mapper.Map<UserDto>(authResult.User)
+                });
             }
             catch (UnauthorizedAccessException)
             {
-                return Unauthorized();
+                return Unauthorized(new { Message = "Invalid username or password" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while processing your request" });
             }
         }
 
