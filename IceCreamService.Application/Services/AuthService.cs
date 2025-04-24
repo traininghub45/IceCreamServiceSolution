@@ -10,22 +10,29 @@ namespace IceCreamService.Application.Interfaces
         // Add dependencies like user repository, token service, etc.
         private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private static readonly byte[] StaticKey = System.Text.Encoding.UTF8.GetBytes("mohammed1961998");
 
-        public AuthService(IUserRepository userRepository, ITokenService tokenService)
+        public AuthService(IUserRepository userRepository, ITokenService tokenService, IJwtTokenGenerator jwtTokenGenerator)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
 
-        public async Task<string> AuthenticateAsync(string userName,string password)
+        public async Task<AuthResult> AuthenticateAsync(string username, string password)
         {
-            //var user = await _userRepository.GetByUsernameAsync(userName);
-            //if (user == null || !VerifyPasswordHash(password, user?.Password))
-            //    throw new UnauthorizedAccessException("Invalid credentials");
-
-            //// Generate token
-            return "";
+            var user = await _userRepository.GetByUsernameAsync(username);
+            if (user == null || !VerifyPasswordHash(password, user.Password))
+            {
+                throw new UnauthorizedAccessException("Invalid credentials");
+            }
+            var token = _jwtTokenGenerator.GenerateToken(user);
+            return new AuthResult
+            {
+                Token = token,
+                User = user
+            };
         }
 
         public async Task RegisterAsync(UserDto request)

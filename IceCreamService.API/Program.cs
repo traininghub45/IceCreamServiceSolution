@@ -29,7 +29,7 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],//The JWT settings are read from builder.Configuration, which typically comes from appsettings.json
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? ""))
     };
@@ -59,6 +59,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
 var app = builder.Build();
 
@@ -73,7 +74,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
+app.UseAuthentication();//UseAuthentication() must come before UseAuthorization()
 app.UseAuthorization();
 
 app.MapControllers();
