@@ -1,90 +1,14 @@
-using IceCreamService.Application.Interfaces;
-using IceCreamService.Application.Services;
-using IceCreamService.Core.Interfaces;
-using IceCreamService.Infrastructure.Repositories;
-using IceCreamService.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using IceCreamService.Application.Mapping;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.Http.Features;
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Register AutoMapper with the profile
-builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-// Add services to the container.
-builder.Services.AddControllers();
-// Configure form options for file uploads
-builder.Services.Configure<FormOptions>(options =>
-{
-    options.MultipartBodyLengthLimit = 20971520; // 20MB limit
-});
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],//The JWT settings are read from builder.Configuration, which typically comes from appsettings.json
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? ""))
-    };
-});
-
-builder.Services.AddAuthorization();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// Add CORS services and allow all origins
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAllOrigins",
-        builder => builder.AllowAnyOrigin()
-                          .AllowAnyHeader()
-                          .AllowAnyMethod());
-});
-
-// Register the ApplicationDbContext
-builder.Services.AddDbContext<ApplicationDbContext>();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IBookingService, BookingService>();
-builder.Services.AddScoped<IBookingRepository, BookingRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IContactRepository, ContactRepository>();
-builder.Services.AddScoped<IContactService, ContactService>();
-builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+// Register services from all layers
+builder.Services
+    .AddInfrastructureServices(builder.Configuration)
+    .AddApplicationServices()
+    .AddApiServices(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-// Enable CORS with the AllowAllOrigins policy
-app.UseCors("AllowAllOrigins");
-app.UseStaticFiles(); // To Access File WWWroot
-
-app.UseHttpsRedirection();
-app.UseAuthentication();//UseAuthentication() must come before UseAuthorization()
-app.UseAuthorization();
-
-app.MapControllers();
+// Configure middleware pipeline
+app.UseApiMiddleware();
 
 app.Run();

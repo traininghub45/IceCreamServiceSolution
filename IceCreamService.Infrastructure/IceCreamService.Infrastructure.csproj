@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IceCreamService.Application\IceCreamService.Application.csproj" />
     <ProjectReference Include="..\IceCreamService.Core\IceCreamService.Core.csproj" />
   </ItemGroup>
 
