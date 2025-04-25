@@ -12,5 +12,6 @@ namespace IceCreamService.Application.DTOs
         public DateTime? CreationDate { get; set; }
         public string? CreatedBy { get; set; }
         public string? phoneNumber { get; set; }
+        public string? UserImgProfile { get; set; }
     }
 }
