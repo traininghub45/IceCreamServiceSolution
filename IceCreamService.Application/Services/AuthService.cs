@@ -34,25 +34,6 @@ namespace IceCreamService.Application.Interfaces
                 User = user
             };
         }
-
-        public async Task RegisterAsync(UserDto request)
-        {
-            //f (await _userRepository.UserExistsAsync(request.Email))
-              //  throw new InvalidOperationException("Username already exists");
-
-            var user = new User
-            {
-                FullName = request.FullName,
-                Username = request.Email,
-                Email = request.Email,
-                Password = HashPassword(request.Password)
-            };
-
-            await _userRepository.AddAsync(user);
-        }
-
-
-
         private string HashPassword(string password)
         {
             using var hmac = new HMACSHA512(StaticKey);
