@@ -8,6 +8,7 @@ using IceCreamService.Application.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,12 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Add services to the container.
 builder.Services.AddControllers();
+// Configure form options for file uploads
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 20971520; // 20MB limit
+});
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -72,6 +79,7 @@ if (app.Environment.IsDevelopment())
 
 // Enable CORS with the AllowAllOrigins policy
 app.UseCors("AllowAllOrigins");
+app.UseStaticFiles(); // To Access File WWWroot
 
 app.UseHttpsRedirection();
 app.UseAuthentication();//UseAuthentication() must come before UseAuthorization()

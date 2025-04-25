@@ -41,19 +41,5 @@ namespace IceCreamService.API.Controllers
                 return StatusCode(500, new { Message = "An error occurred while processing your request" });
             }
         }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserDto request)
-        {
-            try
-            {
-                await _authService.RegisterAsync(request);
-                return Ok();
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
     }
 }

@@ -40,14 +40,14 @@ namespace IceCreamService.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, [FromBody] UserDto userDto)
+        [AllowAnonymous]
+        public async Task<ActionResult> Update(int id, [FromForm] UserDto userDto, IFormFile file)
         {
             if (id != userDto.Id)
             {
                 return BadRequest();
             }
-            await _userService.UpdateAsync(_mapper.Map<User>(userDto));
-            return NoContent();
+            return Ok(await _userService.UpdateAsync(_mapper.Map<User>(userDto), file));
         }
 
         [HttpDelete("{id}")]
@@ -55,6 +55,22 @@ namespace IceCreamService.API.Controllers
         {
             await _userService.DeleteAsync(id);
             return NoContent();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> AddUserAsync([FromBody] UserDto userDto)
+        {
+            try
+            {
+                userDto.UserName = userDto.Email;
+                await _userService.AddAsync(_mapper.Map<User>(userDto));
+                return Ok();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

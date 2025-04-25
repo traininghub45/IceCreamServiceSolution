@@ -9,7 +9,7 @@ namespace IceCreamService.Infrastructure.Data.Config
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.HasKey(e => e.Id);
-            builder.Property(e => e.Username).IsRequired().HasMaxLength(100);
+            builder.Property(e => e.UserName).IsRequired().HasMaxLength(100);
             builder.Property(e => e.Email).IsRequired().HasMaxLength(100);
             builder.Property(e => e.FullName).IsRequired().HasMaxLength(100);
             builder.Property(e => e.Password).IsRequired().HasColumnName("PasswordHash");
