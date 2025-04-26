@@ -40,7 +40,6 @@ namespace IceCreamService.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult> Update(int id, [FromForm] UserDto userDto, IFormFile? file)
         {
             if (id != userDto.Id)
