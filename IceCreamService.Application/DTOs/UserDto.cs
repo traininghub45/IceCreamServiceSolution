@@ -13,5 +13,6 @@ namespace IceCreamService.Application.DTOs
         public string? CreatedBy { get; set; }
         public string? phoneNumber { get; set; }
         public string? UserImgProfile { get; set; }
+        public bool IsActive { get; set; }
     }
 }

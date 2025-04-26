@@ -33,7 +33,7 @@ public class AuthService : IAuthService
         try
         {
             User user = await _userRepository.GetByUsernameAsync(username);
-            if (user == null || !CryptoHelper.VerifyHash(password, user.Password))
+            if (user == null || !CryptoHelper.VerifyPassword(password, user.Password))
             {
                 _logger.LogWarning("Failed login attempt for username: {Username}", username);
                 throw new UnauthorizedAccessException("Invalid credentials");

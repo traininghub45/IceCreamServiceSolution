@@ -13,7 +13,7 @@ public static class MiddlewareExtensions
             app.UseSwaggerUI();
         }
 
-        app.UseCors("AllowAllOrigins");
+        app.UseCors("CorsPolicy");
         app.UseStaticFiles();
         app.UseHttpsRedirection();
         app.UseAuthentication();

@@ -5,7 +5,7 @@ namespace IceCreamService.Application.Helpers
 {
     public static class CryptoHelper
     {
-        
+
         private static readonly byte[] StaticKey = Convert.FromBase64String(
             "v3ryL0ngAndS3cur3K3yW1thHigh3ntr0pyAndRand0mn3ss1234567890AB" +
             "CDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/"
@@ -27,7 +27,7 @@ namespace IceCreamService.Application.Helpers
         /// <summary>
         /// Verifies if the hashed data matches the original input (secure against timing attacks).
         /// </summary>
-        public static bool VerifyHash(string hashedData, string data)
+        public static bool VerifyHash(string data, string hashedData)
         {
             if (string.IsNullOrEmpty(hashedData) || string.IsNullOrEmpty(data))
                 return false;
@@ -53,6 +53,11 @@ namespace IceCreamService.Application.Helpers
                     numBytesRequested: 64
                 )
             );
+        }
+
+        public static bool VerifyPassword(string password, string hashedPassword)
+        {
+            return HashPassword(password) == hashedPassword;
         }
     }
 }
