@@ -1,7 +1,11 @@
-﻿public static class MiddlewareExtensions
+﻿using IceCreamService.Core.Middleware;
+
+namespace IceCreamService.API.Middlewares;
+public static class MiddlewareExtensions
 {
     public static WebApplication UseApiMiddleware(this WebApplication app)
     {
+        app.UseMiddleware<ExceptionMiddleware>();
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
