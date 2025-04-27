@@ -14,7 +14,7 @@ namespace IceCreamService.Infrastructure.Repositories
 
         public async Task<User> GetByUsernameAsync(string username)
         {
-            return await _context.Users.SingleOrDefaultAsync(u => u.Username == username) ?? new User();
+            return await _context.Users.SingleOrDefaultAsync(u => u.UserName == username) ?? null;
         }
     }
 }
