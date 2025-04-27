@@ -11,5 +11,7 @@ namespace IceCreamService.Application.Interfaces
         Task AddAsync(Booking booking);
         Task UpdateAsync(Booking booking);
         Task DeleteByIdAsync(int id);
+        Task<IEnumerable<Booking>> GetAllByUserIdAsync(int userId, int pageNumber, int pageSize);
+
     }
 }

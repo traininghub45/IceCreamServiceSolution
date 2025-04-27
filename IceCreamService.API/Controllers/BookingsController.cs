@@ -37,13 +37,20 @@ namespace IceCreamService.API.Controllers
         {
             return Ok(await _bookingService.GetAllAsync());
         }
+        [HttpGet]
+        [Route("getByUserId")]
+
+        public async Task<ActionResult<IEnumerable<BookingDto>>> GetAllByUserIdAsync([FromQuery]int userId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
+        {
+            return Ok(await _bookingService.GetAllByUserIdAsync(userId,pageNumber,pageSize));
+        }
 
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult> AddAsync([FromBody] BookingDto bookingDto)
         {
             await _bookingService.AddAsync(_mapper.Map<Booking>(bookingDto));
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = bookingDto.Id }, bookingDto);
+            return Ok(bookingDto.Id);
         }
 
         [HttpPut("{id}")]

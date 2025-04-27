@@ -10,5 +10,6 @@ namespace IceCreamService.Core.Entities
         public string? Password { get; set; }
         public DateTime CreationDate { get; set; }
         public string? CreatedBy { get; set; }
+        public ICollection<Booking>? Bookings { get; set; }  // Navigation property to Bookings
     }
 }
