@@ -46,11 +46,10 @@ namespace IceCreamService.API.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult> AddAsync([FromBody] BookingDto bookingDto)
         {
             await _bookingService.AddAsync(_mapper.Map<Booking>(bookingDto));
-            return Ok(bookingDto.Id);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = bookingDto.Id }, bookingDto);
         }
 
         [HttpPut("{id}")]
