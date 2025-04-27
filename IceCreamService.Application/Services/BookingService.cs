@@ -37,5 +37,10 @@ namespace IceCreamService.Application.Services
         {
             await _bookingRepository.DeleteByIdAsync(id);
         }
+
+        public async Task<IEnumerable<Booking>> GetAllByUserIdAsync(int userId, int pageNumber, int pageSize)
+        {
+            return await _bookingRepository.GetAllByUserIdAsync(userId, pageNumber, pageSize);
+        }
     }
 }
