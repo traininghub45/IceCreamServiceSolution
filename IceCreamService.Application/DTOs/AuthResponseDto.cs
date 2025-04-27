@@ -1,8 +1,7 @@
-﻿namespace IceCreamService.Application.DTOs
+﻿using IceCreamService.Application.DTOs;
+
+public class AuthResponseDto
 {
-    public class AuthResponseDto
-    {
-        public string? Token { get; set; }
-        public UserDto? User { get; set; }
-    }
+    public string Token { get; set; } = null!;
+    public UserDto User { get; set; } = null!;
 }

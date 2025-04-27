@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using Azure.Core;
-using IceCreamService.Application.DTOs;
 using IceCreamService.Application.Interfaces;
 using IceCreamService.Core.Entities;
 using IceCreamService.Core.Interfaces;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http;
+using IceCreamService.Application.Helpers;
 
 namespace IceCreamService.Application.Services
 {
@@ -36,7 +35,10 @@ namespace IceCreamService.Application.Services
                 FullName = request.FullName,
                 UserName = request.Email,
                 Email = request.Email,
-                Password = HashPassword(request.Password)
+                CreationDate = DateTime.Now,
+                CreatedBy = request.CreatedBy,
+                IsActive = request.IsActive,
+                Password = CryptoHelper.HashPassword(request.Password)
             };
             await _userRepository.AddAsync(user);
         }
@@ -115,19 +117,6 @@ namespace IceCreamService.Application.Services
             await _userRepository.DeleteByIdAsync(id);
         }
 
-        private string HashPassword(string password)
-        {
-            using var hmac = new HMACSHA512(StaticKey);
-            var passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(passwordHash);
-        }
-
-        private bool VerifyPasswordHash(string password, string storedHash)
-        {
-            using var hmac = new HMACSHA512(StaticKey);
-            var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            return storedHash == Convert.ToBase64String(computedHash);
-        }
     }
 }
 

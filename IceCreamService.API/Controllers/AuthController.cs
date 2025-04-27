@@ -11,12 +11,15 @@ namespace IceCreamService.API.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IMapper _mapper;
+        private readonly ILogger<AuthController> _logger;
 
 
-        public AuthController(IAuthService authService, IMapper mapper)
+
+        public AuthController(IAuthService authService, IMapper mapper, ILogger<AuthController> logger)
         {
             _authService = authService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPost("login")]
@@ -34,10 +37,12 @@ namespace IceCreamService.API.Controllers
             }
             catch (UnauthorizedAccessException)
             {
+                _logger.LogWarning("Failed login attempt for {Email}", userLoginDto.Email);
                 return Unauthorized(new { Message = "Invalid username or password" });
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error during login for {Email}", userLoginDto.Email);
                 return StatusCode(500, new { Message = "An error occurred while processing your request" });
             }
         }

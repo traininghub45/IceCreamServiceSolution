@@ -1,47 +1,45 @@
-﻿using IceCreamService.Core.Entities;
+﻿using IceCreamService.Core.Configurations;
+using IceCreamService.Core.Entities;
 using IceCreamService.Core.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-
-namespace IceCreamService.Infrastructure.Repositories
+namespace IceCreamService.Infrastructure.Repositories;
+public class JwtTokenGenerator : IJwtTokenGenerator
 {
-    public class JwtTokenGenerator : IJwtTokenGenerator
+    private readonly AuthSettings _authSettings;
+
+    public JwtTokenGenerator(IOptions<AuthSettings> authOptions)
     {
-        private readonly IConfiguration _configuration;
+        _authSettings = authOptions.Value;
 
-        public JwtTokenGenerator(IConfiguration configuration)
+    }
+
+    public async Task<string> GenerateTokenAsync(User user)
+    {
+        var securityKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_authSettings.Secret));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
         {
-            _configuration = configuration;
-        }
-
-        public string GenerateToken(User user)
-        {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
             new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            // Add additional claims as needed
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpireDays"])),
-                signingCredentials: credentials
-            );
+        var token = new JwtSecurityToken(
+            issuer: _authSettings.Issuer,
+            audience: _authSettings.Audience,
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(_authSettings.TokenExpirationMinutes),
+            signingCredentials: credentials
+        );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+        return await Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
     }
 }

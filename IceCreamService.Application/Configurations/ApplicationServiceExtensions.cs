@@ -3,6 +3,7 @@ using IceCreamService.Application.Services;
 using IceCreamService.Application.Mapping;
 using Microsoft.Extensions.DependencyInjection;
 
+namespace IceCreamService.Application.Configurations;
 public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)

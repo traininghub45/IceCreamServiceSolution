@@ -1,51 +1,62 @@
-﻿using System.Security.Cryptography;
-using IceCreamService.Application.DTOs;
+﻿using IceCreamService.Application.Helpers;
+using IceCreamService.Application.Interfaces;
 using IceCreamService.Core.Entities;
 using IceCreamService.Core.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Security.Authentication;
 
-namespace IceCreamService.Application.Interfaces
+namespace IceCreamService.Application.Services;
+public class AuthService : IAuthService
 {
-    public class AuthService : IAuthService
-    {
-        // Add dependencies like user repository, token service, etc.
-        private readonly IUserRepository _userRepository;
-        private readonly ITokenService _tokenService;
-        private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        private static readonly byte[] StaticKey = System.Text.Encoding.UTF8.GetBytes("mohammed1961998");
+    private readonly IUserRepository _userRepository;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IUserRepository userRepository, ITokenService tokenService, IJwtTokenGenerator jwtTokenGenerator)
+    public AuthService(
+        IUserRepository userRepository,
+        IJwtTokenGenerator jwtTokenGenerator,
+        ILogger<AuthService> logger)
+    {
+        _userRepository = userRepository;
+        _jwtTokenGenerator = jwtTokenGenerator;
+        _logger = logger;
+    }
+
+    public async Task<AuthResult> AuthenticateAsync(string username, string password)
+    {
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
-            _userRepository = userRepository;
-            _tokenService = tokenService;
-            _jwtTokenGenerator = jwtTokenGenerator;
+            _logger.LogWarning("Empty username or password in login attempt");
+            throw new ArgumentException("Username and password must be provided");
         }
 
-        public async Task<AuthResult> AuthenticateAsync(string username, string password)
+        try
         {
-            var user = await _userRepository.GetByUsernameAsync(username);
-            if (user == null || !VerifyPasswordHash(password, user.Password))
+            User user = await _userRepository.GetByUsernameAsync(username);
+            if (user == null || !CryptoHelper.VerifyPassword(password, user.Password))
             {
+                _logger.LogWarning("Failed login attempt for username: {Username}", username);
                 throw new UnauthorizedAccessException("Invalid credentials");
             }
-            var token = _jwtTokenGenerator.GenerateToken(user);
+
+            if (!user.IsActive)
+            {
+                _logger.LogWarning("Attempt to login to disabled account: {Username}", username);
+                throw new InvalidOperationException("User account is disabled");
+            }
+
+            string token = await _jwtTokenGenerator.GenerateTokenAsync(user);
+
             return new AuthResult
             {
                 Token = token,
                 User = user
             };
         }
-        private string HashPassword(string password)
+        catch (Exception ex) when (ex is not UnauthorizedAccessException)
         {
-            using var hmac = new HMACSHA512(StaticKey);
-            var passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(passwordHash);
-        }
-
-        private bool VerifyPasswordHash(string password, string storedHash)
-        {
-            using var hmac = new HMACSHA512(StaticKey);
-            var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            return storedHash == Convert.ToBase64String(computedHash);
+            _logger.LogError(ex, "Authentication error for username: {Username}", username);
+            throw new AuthenticationException("Authentication failed", ex);
         }
     }
 }
