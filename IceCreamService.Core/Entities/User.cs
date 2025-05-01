@@ -13,6 +13,5 @@ namespace IceCreamService.Core.Entities
         public required string CreatedBy { get; set; }
         public string? phoneNumber { get; set; }
         public string? UserImgProfile { get; set; }
-        public ICollection<Booking>? Bookings { get; set; }  // Navigation property to Bookings
     }
 }

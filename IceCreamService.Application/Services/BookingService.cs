@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using IceCreamService.Application.DTOs;
 using IceCreamService.Application.Interfaces;
 using IceCreamService.Core.Entities;
 using IceCreamService.Core.Interfaces;
@@ -20,7 +21,7 @@ namespace IceCreamService.Application.Services
 
         public async Task<IEnumerable<Booking>> GetAllAsync()
         {
-           return await _bookingRepository.GetAllAsync();
+            return await _bookingRepository.GetAllAsync();
         }
 
         public async Task AddAsync(Booking booking)
@@ -38,9 +39,19 @@ namespace IceCreamService.Application.Services
             await _bookingRepository.DeleteByIdAsync(id);
         }
 
-        public async Task<IEnumerable<Booking>> GetAllByUserIdAsync(int userId, int pageNumber, int pageSize)
+        public async Task<PagedResult<Booking>> GetAllByUserIdAsync(int userId, int skip, int take)
         {
-            return await _bookingRepository.GetAllByUserIdAsync(userId, pageNumber, pageSize);
+            var result = await _bookingRepository.GetAllByUserIdAsync(userId, skip, take);
+
+            return new PagedResult<Booking>
+            {
+                Data = result.Items,
+                TotalCount = result.TotalCount
+            };
+        }
+    }
+}
+sync(userId, pageNumber, pageSize);
         }
     }
 }

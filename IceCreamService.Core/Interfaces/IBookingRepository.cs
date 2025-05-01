@@ -4,7 +4,7 @@ namespace IceCreamService.Core.Interfaces
 {
     public interface IBookingRepository : IRepository<Booking>
     {
-        Task<IReadOnlyList<Booking>> GetAllByUserIdAsync(int userId, int pageNumber, int pageSize);
+        Task<(IReadOnlyList<Booking> Items, int TotalCount)> GetAllByUserIdAsync(int userId, int skip, int take);
 
     }
 }

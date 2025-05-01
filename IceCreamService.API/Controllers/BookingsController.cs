@@ -22,6 +22,7 @@ namespace IceCreamService.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [ActionName("GetByIdAsync")] // Explicit action name
         public async Task<ActionResult<BookingDto>> GetByIdAsync(int id)
         {
             var booking = await _bookingService.GetByIdAsync(id);
@@ -37,12 +38,14 @@ namespace IceCreamService.API.Controllers
         {
             return Ok(await _bookingService.GetAllAsync());
         }
-        [HttpGet]
-        [Route("getByUserId")]
 
-        public async Task<ActionResult<IEnumerable<BookingDto>>> GetAllByUserIdAsync([FromQuery]int userId, [FromQuery] int pageNumber, [FromQuery] int pageSize)
+        [HttpGet("getByUserId")]
+        public async Task<ActionResult<IEnumerable<BookingDto>>> GetAllByUserIdAsync(
+            [FromQuery] int userId,
+            [FromQuery] int skip,
+            [FromQuery] int take)
         {
-            return Ok(await _bookingService.GetAllByUserIdAsync(userId,pageNumber,pageSize));
+            return Ok(await _bookingService.GetAllByUserIdAsync(userId, skip, take));
         }
 
         [HttpPost]
@@ -57,7 +60,7 @@ namespace IceCreamService.API.Controllers
         {
             if (id != bookingDto.Id)
             {
-                return BadRequest();
+                return BadRequest("ID mismatch");
             }
             await _bookingService.UpdateAsync(_mapper.Map<Booking>(bookingDto));
             return NoContent();

@@ -6,33 +6,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IceCreamService.Infrastructure.Repositories
 {
-    public class BookingRepository : Repository<Booking>,IBookingRepository
+    public class BookingRepository : Repository<Booking>, IBookingRepository
     {
         public BookingRepository(ApplicationDbContext context) : base(context)
         {
         }
 
-        public async Task<IReadOnlyList<Booking>> GetAllByUserIdAsync(
+        public async Task<(IReadOnlyList<Booking> Items, int TotalCount)> GetAllByUserIdAsync(
             int userId,
-            int pageNumber,
-            int pageSize
-            )
+            int skip = 0,
+            int take = 10)
         {
             if (userId <= 0)
                 throw new ArgumentException("Invalid user ID.", nameof(userId));
+            var query = _context.Bookings
+                .Where(x => x.UserId == userId);
 
-            if (pageNumber <= 0)
-                throw new ArgumentException("Page number should be positive.", nameof(pageNumber));
+            var totalRecords = await query.CountAsync();
 
-            if (pageSize <= 0)
-                throw new ArgumentException("Page size should be positive.", nameof(pageSize));
+            var records = await query
+                .OrderBy(x => x.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
 
-            return await _context.Bookings
-                .Where(x => x.UserId == userId)
-                .OrderBy(x => x.Id) // or some other meaningful order
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync(default);
+            return (records, totalRecords);
         }
+
     }
 }
