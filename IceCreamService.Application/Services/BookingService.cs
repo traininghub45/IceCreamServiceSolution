@@ -51,7 +51,3 @@ namespace IceCreamService.Application.Services
         }
     }
 }
-sync(userId, pageNumber, pageSize);
-        }
-    }
-}
