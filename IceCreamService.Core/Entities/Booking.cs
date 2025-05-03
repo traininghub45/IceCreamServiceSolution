@@ -4,7 +4,6 @@
     {
         public int Id { get; set; }
         public int UserId { get; set; }  // Foreign key property
-        public User? User { get; set; }  // Navigation property
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public DateTime EventDate { get; set; }
