@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Ignore all migration files except the snapshot
+IceCreamService.Infrastructure/Migrations/*
+!src/Infrastructure/Migrations/*Snapshot.cs
