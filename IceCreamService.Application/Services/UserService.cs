@@ -117,6 +117,10 @@ namespace IceCreamService.Application.Services
             await _userRepository.DeleteByIdAsync(id);
         }
 
+        public async Task ResetPasswordAsync(string token, string newPassword)
+        {
+            await _userRepository.ResetPasswordAsync(token, newPassword);
+        }
     }
 }
 

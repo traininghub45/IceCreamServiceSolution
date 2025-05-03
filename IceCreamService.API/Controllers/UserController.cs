@@ -2,7 +2,9 @@
 using IceCreamService.Application.DTOs;
 using IceCreamService.Application.Interfaces;
 using IceCreamService.Core.Entities;
+using IceCreamService.Core.Validators;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IceCreamService.API.Controllers
@@ -14,12 +16,14 @@ namespace IceCreamService.API.Controllers
     {
 
         private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
 
-        public UsersController(IUserService userService, IMapper mapper)
+        public UsersController(IUserService userService, IMapper mapper, IEmailService emailService)
         {
             _mapper = mapper;
             _userService = userService;
+            _emailService = emailService;
         }
 
         [HttpGet("{id}")]
@@ -70,6 +74,27 @@ namespace IceCreamService.API.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            // Validate email format
+            if (string.IsNullOrEmpty(request.Email) || !new EmailAddressValidator().IsValidEmail(request.Email))
+            {
+                return BadRequest("Invalid email format.");
+            }
+            await _emailService.SendEmailAsync(request.Email, "Forgot Password");
+            return Ok();
+        }
+
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordRequestDto request)
+        {
+            await _userService.ResetPasswordAsync(request.Token, request.NewPassword);
+            return NoContent();
         }
     }
 }

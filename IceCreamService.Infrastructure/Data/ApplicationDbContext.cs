@@ -1,5 +1,6 @@
 ﻿using IceCreamService.Core.Entities;
 using IceCreamService.Infrastructure.Data.Config;
+using IceCreamService.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -12,6 +13,7 @@ namespace IceCreamService.Infrastructure.Data
         public DbSet<User> Users { get; set; }
         public DbSet<ContactMessage> ContactMessages { get; set; }
 
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -24,7 +26,6 @@ namespace IceCreamService.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserConfiguration).Assembly);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContactMessageConfiguration).Assembly);
         }
     }
 }
