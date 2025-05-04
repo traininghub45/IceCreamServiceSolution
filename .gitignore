@@ -364,3 +364,5 @@ FodyWeavers.xsd
 # Ignore all migration files except the snapshot
 IceCreamService.Infrastructure/Migrations/*
 !src/Infrastructure/Migrations/*Snapshot.cs
+# Ignore all uploaded files in wwwroot
+IceCreamService.API/wwwroot/*
